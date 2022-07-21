@@ -1,34 +1,22 @@
 const express = require('express')
 const expressHandlebars = require('express-handlebars')
 
+const fortune = require('./lib/fortune.js')
+
 const app = express()
 
 app.engine('handlebars', expressHandlebars.engine({ defaultLayout: 'main' }))
 app.set('view engine', 'handlebars')
-
-// app.engine('handlebars', engine());
-// app.set('view engine', 'handlebars');
-// app.set("views", "./views");
-
 
 app.use(express.static(__dirname + '/public'))
 
 const port = process.env.PORT || 3010
 
 app.get('/', (req, res) => res.render('home'))
-
-const fortunes = [
-    "Conquer your fears or they will conquer you.",
-    "Rivers need springs.",
-    "Do not fear what you don't know.",
-    "You will have a pleasant surprise.",
-    "Whenever possible, keep it simple.",
-  ]
   
-  app.get('/about', (req, res) => {
-    const randomFortune = fortunes[Math.floor(Math.random()*fortunes.length)]
-    res.render('about', { fortune: randomFortune })
-  })
+app.get('/about', (req, res) => {
+    res.render('about', { fortune: fortune.getFortune() })
+})
 
 // custom 404 page
 app.use((_req, res) => {
