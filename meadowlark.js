@@ -1,7 +1,9 @@
 const express = require('express')
 const expressHandlebars = require('express-handlebars')
 
-const fortune = require('./lib/fortune.js')
+const handlers = require('./lib/handlers')
+
+// const fortune = require('./lib/fortune.js')
 
 const app = express()
 
@@ -10,28 +12,24 @@ app.set('view engine', 'handlebars')
 
 app.use(express.static(__dirname + '/public'))
 
-const port = process.env.PORT || 3010
+// const port = process.env.PORT || 3010
 
-app.get('/', (req, res) => res.render('home'))
-  
-app.get('/about', (req, res) => {
-    res.render('about', { fortune: fortune.getFortune() })
-})
+app.get('/', handlers.home)
+
+app.get('/about', handlers.about)
 
 // custom 404 page
-app.use((_req, res) => {
-  res.type('text/plain')
-  res.status(404)
-  res.send('404 - Not Found')
-})
+app.use(handlers.notFound)
 
 // custom 500 page
-app.use((err, _req, res, _next) => {
-  console.error(err.message)
-  res.type('text/plain')
-  res.status(500)
-  res.send('500 - Server Error')
-})
+app.use(handlers.serverError)
 
-app.listen(port, () => console.log(
-  `Express started on http://localhost:${port}; ` + `press Ctrl-C to terminate.`))
+if(require.main === module) {
+    app.listen(3010, () => {
+        // console.log( `Express started on http://localhost:${port}` + '; press Ctrl-C to terminate.' )
+        console.log( `Express started on http://localhost:3010` + '; press Ctrl-C to terminate.' )
+
+    })
+  } else {
+    module.exports = app
+  }
